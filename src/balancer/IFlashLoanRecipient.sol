@@ -17,7 +17,7 @@ pragma solidity ^0.8.0;
 
 // Inspired by Aave Protocol's IFlashLoanReceiver.
 
-import "openzeppelin-contracts/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
 interface IFlashLoanRecipientBalancer {
     /**
