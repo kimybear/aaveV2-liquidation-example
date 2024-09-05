@@ -22,8 +22,8 @@ contract LiquidationBotTest is Test {
 		// WBTC TOKENB
 		collateralAsset = 0xfA6EC96b457250E269d7E3B0Db37aA7dCB89E7c1;
 		// The address of the borrower getting liquidated
-		//user = 0xAc94700e79a510b885014407918805FA0fCaA6e8;
-		user = 0xe20709f5796106E36A6EaED68C58d105E1603a26;
+		// user 4
+		user = 0xa282877b05E4F9920Dc6E643eFc54beEE3E09b1E;
 
 	}
 
@@ -38,35 +38,35 @@ contract LiquidationBotTest is Test {
 	// 	console.log("collateralAsset balance: ", balance);
     //     assertEq(balance, 0);
     // }
-    // function testHealthFactor() public {
-	// 	(, , , , , uint256 healthFactor) = ILendingPool(lendingPool).getUserAccountData(user);
-	// 	console.log("health factor", healthFactor/1e16);
-	// 	assertEq(healthFactor < 1.3 ether, true);
-    // }
+    function testHealthFactor() public {
+		(, , , , , uint256 healthFactor) = ILendingPool(lendingPool).getUserAccountData(user);
+		console.log("health factor in %", healthFactor/1e16);
+		assertEq(healthFactor < 1.3 ether, true);
+    }
 
-	function testLiquidataionCall() public {
-		uint256 amount = 385664245699518349;
-		uint256 healthFactor = liquidationBot.checkHealthFactor(user);
-		console.log("healthFactor in e16 is:", healthFactor/1e16);
-		assertEq(healthFactor < 1.0 ether, true);
+	// function testLiquidataionCall() public {
+	// 	//uint256 amount = 385664245699518349;
+	// 	uint256 healthFactor = liquidationBot.checkHealthFactor(user);
+	// 	console.log("healthFactor in e16 is:", healthFactor/1e16);
+	// 	assertEq(healthFactor < 1.0 ether, true);
 
-		(uint256 totalCollateralETH, uint256 totalDebtETH, uint256 availableBorrowsETH, uint256 currentLiquidationThreshold, ,) = ILendingPool(lendingPool).getUserAccountData(user);
-		console.log("total debt:", totalDebtETH);
-		uint256 debtToCover1 = type(uint256).max;
-		//uint256 debtToCover1 = uint(-1);
-		console.log("debtToCover1: ", debtToCover1);
-		//liquidationBot.triggerLiquidation(collateralAsset, debtAsset, user, totalDebtETH);
-		ILendingPool(lendingPool).liquidationCall(
-            collateralAsset,
-            debtAsset,
-            user,
-            debtToCover1,
-            false
-        );
+	// 	//(uint256 totalCollateralETH, uint256 totalDebtETH, uint256 availableBorrowsETH, uint256 currentLiquidationThreshold, ,) = ILendingPool(lendingPool).getUserAccountData(user);
+	// 	//console.log("total debt:", totalDebtETH);
+	// 	uint256 debtToCover1 = type(uint256).max;
+	// 	//uint256 debtToCover1 = uint(-1);
+	// 	console.log("debtToCover1: ", debtToCover1);
+	// 	//liquidationBot.triggerLiquidation(collateralAsset, debtAsset, user, totalDebtETH);
+	// 	ILendingPool(lendingPool).liquidationCall(
+    //         collateralAsset,
+    //         debtAsset,
+    //         user,
+    //         debtToCover1,
+    //         false
+    //     );
 
-		// uint256 balance = IERC20(debtAsset).balanceOf(address(liquidationBot));
-		// assertEq(balance > 0, true);
-		// console.log("after liquidation, current balance ", balance);
-	}
+	// 	// uint256 balance = IERC20(debtAsset).balanceOf(address(liquidationBot));
+	// 	// assertEq(balance > 0, true);
+	// 	// console.log("after liquidation, current balance ", balance);
+	// }
 }
 

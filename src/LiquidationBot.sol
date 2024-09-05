@@ -31,6 +31,8 @@ contract LiquidationBot {
 
     function triggerLiquidation (address collateralAsset,
         address debtAsset, address user, uint256 debtToCover) public {
+        
+        
         // determine what collateral & amount to liquidate
         // make the liquidation call
 
@@ -48,7 +50,7 @@ contract LiquidationBot {
             collateral,
             _HONEY,
             user,
-            debtToCover,
+            debtToCover1,
             false
         );
 
