@@ -17,10 +17,10 @@ contract LiquidationBotTest is Test {
 		// lending pool
 		lendingPool = 0x721F0D065F30C6D4c5AD727B0c69Af3dbc858d49;
 		liquidationBot = new LiquidationBot(lendingPool);
-		// HONEY TOKENA
-		debtAsset = 0x23dBAD16959cCb8Bd355854EF268ffBdba5F8FC4;
-		// WBTC TOKENB
-		collateralAsset = 0xfA6EC96b457250E269d7E3B0Db37aA7dCB89E7c1;
+		// HONEY TOKENB
+		debtAsset = 0xfA6EC96b457250E269d7E3B0Db37aA7dCB89E7c1;
+		// WBTC TOKENA
+		collateralAsset = 0x23dBAD16959cCb8Bd355854EF268ffBdba5F8FC4;
 		// The address of the borrower getting liquidated
 		// user 4
 		user = 0xa282877b05E4F9920Dc6E643eFc54beEE3E09b1E;
@@ -41,32 +41,43 @@ contract LiquidationBotTest is Test {
     function testHealthFactor() public {
 		(, , , , , uint256 healthFactor) = ILendingPool(lendingPool).getUserAccountData(user);
 		console.log("health factor in %", healthFactor/1e16);
-		assertEq(healthFactor < 1.3 ether, true);
+		assertEq(healthFactor < 1e18, true);
     }
 
-	// function testLiquidataionCall() public {
-	// 	//uint256 amount = 385664245699518349;
-	// 	uint256 healthFactor = liquidationBot.checkHealthFactor(user);
-	// 	console.log("healthFactor in e16 is:", healthFactor/1e16);
-	// 	assertEq(healthFactor < 1.0 ether, true);
+	function testLiquidataionCall() public {
+		//uint256 amount = 385664245699518349;
+		uint256 healthFactor = liquidationBot.checkHealthFactor(user);
+		console.log("healthFactor in e16 is:", healthFactor/1e16);
+		assertEq(healthFactor < 1e18, true);
+		//require(healthFactor < 1e18, "Health factor is above 1, cannot liquidate");
 
-	// 	//(uint256 totalCollateralETH, uint256 totalDebtETH, uint256 availableBorrowsETH, uint256 currentLiquidationThreshold, ,) = ILendingPool(lendingPool).getUserAccountData(user);
-	// 	//console.log("total debt:", totalDebtETH);
-	// 	uint256 debtToCover1 = type(uint256).max;
-	// 	//uint256 debtToCover1 = uint(-1);
-	// 	console.log("debtToCover1: ", debtToCover1);
-	// 	//liquidationBot.triggerLiquidation(collateralAsset, debtAsset, user, totalDebtETH);
-	// 	ILendingPool(lendingPool).liquidationCall(
-    //         collateralAsset,
-    //         debtAsset,
-    //         user,
-    //         debtToCover1,
-    //         false
-    //     );
+		//(uint256 totalCollateralETH, uint256 totalDebtETH, uint256 availableBorrowsETH, uint256 currentLiquidationThreshold, ,) = ILendingPool(lendingPool).getUserAccountData(user);
+		//console.log("total debt:", totalDebtETH);
+		uint256 debtToCover1 = type(uint256).max -1;
+		//uint256 debtToCover1 = uint(-1);
+		console.log("debtToCover1: ", debtToCover1);
+		approveToken(debtAsset, address(lendingPool), debtToCover1);
+		// liquidationBot is using wBTC & HONEY
+		// liquidationBot.triggerLiquidation(collateralAsset, debtAsset, user, debtToCover1);
+		ILendingPool(lendingPool).liquidationCall(
+            collateralAsset,
+            debtAsset,
+            user,
+            debtToCover1,
+            false
+        );
 
-	// 	// uint256 balance = IERC20(debtAsset).balanceOf(address(liquidationBot));
-	// 	// assertEq(balance > 0, true);
-	// 	// console.log("after liquidation, current balance ", balance);
-	// }
+		// uint256 balance = IERC20(debtAsset).balanceOf(address(liquidationBot));
+		// assertEq(balance > 0, true);
+		// console.log("after liquidation, current balance ", balance);
+	}
+
+	function approveToken(
+        address token,
+        address to,
+        uint256 amountIn
+    ) internal {
+        require(IERC20(token).approve(to, amountIn), "approve failed");
+    }
 }
 
